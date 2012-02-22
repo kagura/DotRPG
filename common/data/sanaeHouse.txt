@@ -1,0 +1,25 @@
+eventProperty 1
+	image sanae.tga
+
+eventProperty 1
+	image
+	switch 10
+
+onTouch 2
+	changemap "town" 6 6;
+
+onCheck 1
+	if 10 "";
+		speaker マルヒト;
+		msg "一緒にパラパラを見に行かないか";
+		speaker さなえ;
+		msg "嫌よ、１人で行ってきなさいよ";
+		speaker マルヒト;
+		msg "そう言うなよ、今度なんでも買ってあげるよ";
+		speaker さなえ;
+		msg "それならいいわよ。約束は守りなさいよ";
+		speaker "";
+		msg "さなえ が仲間になった";
+		addparty sanae;
+		set 10 1;
+	endif;

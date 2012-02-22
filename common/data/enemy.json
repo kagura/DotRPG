@@ -1,0 +1,28 @@
+[
+	{
+		"name": "テディ・ベア",
+		"maxHp": 50,
+		"mapMp": 100,
+		"offense": 10,
+		"speed": 0,
+		"image": "ttm_ori020.png",
+		"actions": [
+			{
+				"start_turn": 0,
+				"every_turn": 1,
+				"switch": 0,
+				"hp_under_percent": 100,
+				"probability": 5,
+				"skill": 0
+			},
+			{
+				"start_turn": 0,
+				"every_turn": 1,
+				"switch": 0,
+				"hp_under_percent": 100,
+				"probability": 5,
+				"base_action": 0
+			}
+		]
+	}
+]

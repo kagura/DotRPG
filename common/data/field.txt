@@ -1,0 +1,5 @@
+onTouch 1
+	changemap "town" 12 5;
+
+onTouch 2
+	changemap "lake" 18 7;

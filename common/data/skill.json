@@ -1,0 +1,23 @@
+[
+	{
+		"name": "ファイア",
+		"description": "炎で単体に小ダメージ",
+		"scope": "one_enemy",
+		"damage": 30,
+		"decreaseMP": 5
+	},
+	{
+		"name": "突進",
+		"description": "単体に小ダメージ",
+		"scope": "one_enemy",
+		"damage": 10,
+		"decreaseMP": 50
+	},
+	{
+		"name": "ヒール",
+		"description": "単体を小回復",
+		"scope": "one_friend",
+		"damage": -30,
+		"decreaseMP": 10
+	}
+]

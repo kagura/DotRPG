@@ -1,0 +1,19 @@
+onEnter
+	if 5 "";
+		speaker "テレビ";
+		msg "フシギ発見番組の時間がやってまいりました";
+		msg "さて今回紹介するのは、未知の生物パラパラ!";
+		speaker "";
+		msg "画面にはタコのような生物が映し出されている";
+		speaker "マルヒト";
+		msg "こりゃすごいぜ、この眼で見てみたいなー";
+		msg "よし、パラパラを求めて三千里だっ";
+		speaker "";
+		set 5 1;
+	endif;
+
+onCheck 1
+	msg "宇宙生命体パラパラが映し出されている";
+
+onTouch 2
+	changemap "town" 9 8;

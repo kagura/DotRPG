@@ -1,0 +1,5 @@
+member maruhito
+	image man.tga
+
+member sanae
+	image sanae.tga

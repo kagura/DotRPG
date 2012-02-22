@@ -1,0 +1,22 @@
+map town
+	chipset field
+
+map maruhitoHouse
+	chipset indoor
+	
+map sanaeHouse
+	chipset indoor
+
+map field
+	chipset field
+
+map lake
+	chipset field
+	
+chipSet field
+	image mapchip.bmp
+	impassableIDs 17 3
+
+chipSet indoor
+	image indoor.bmp
+	impassableIDs 0 1 3 16
