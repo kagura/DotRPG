@@ -1,0 +1,16 @@
+SRC: [
+	"../common/gamemain.cpp",
+	"../common/script.cpp",
+	"../common/fmfmap.cpp",
+	"../common/util.cpp",
+	"../common/map.cpp",
+	"../common/party.cpp",
+	"../common/mapscene.cpp",
+	"../common/battlescene.cpp",
+	"../common/enemy.cpp",
+	"../common/database.cpp",
+	"main.cpp"
+	]
+CFLAGS: "cl /c /nologo /MT /EHsc"
+CINCLUDES: [".", "../common", "jsoncpp-src-0.5.0/include", "dxlib"]
+LFLAGS : "/out:main.exe /SUBSYSTEM:WINDOWS /LIBPATH:dxlib jsoncpp-src-0.5.0/build/vs71/release/lib_json/json_vc71_libmt.lib"
