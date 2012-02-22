@@ -1,1 +1,2 @@
-Hello,World
+2D の RPGを簡単に作るフレームワーク、の作りかけです。
+マップデータは <a href="http://www.hyperdevice.net/">Platinum</a>で、その他はスクリプトで記述します。
