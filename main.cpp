@@ -1,6 +1,6 @@
 // マップスクロール基本
 #include "DxLib.h"
-#include "../common/gamemain.h"
+#include "common/gamemain.h"
 
 const int SCREEN_W = 640;
 const int SCREEN_H = 480;
@@ -92,7 +92,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
 	freopen("stdout.txt", "w", stdout);
 	
-	SetCurrentDirectory("../common/data");
+	SetCurrentDirectory("common/data");
 	
 	ChangeWindowMode(TRUE);
 	SetGraphMode( SCREEN_W , SCREEN_H , 16 ) ;

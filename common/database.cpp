@@ -1,7 +1,4 @@
 #include "database.h"
-#include "json/json.h"
-#include "json/writer.h"
-#include "json/reader.h"
 #include "util.h"
 #include "picojson.h"
 #include "gamefunc.h"
