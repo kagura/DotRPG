@@ -1,5 +1,6 @@
 Windowsで 2D の RPGを簡単に作るフレームワーク、の作りかけです。
 マップデータは マップエディタPlatinumで、その他はスクリプトで記述します。
+コンパイルにはVC++を使います。
 
 [著作権]
 DX Library Copyright (C) 2001-2012 Takumi Yamada.
