@@ -1,18 +1,18 @@
 onTouch 1
-	changemap "field" 8 6;
+	changemap "field" 8 6
 
 onTouch 3
-	speaker "パラパラ";
-	msg "パラッパラッ！";
-	speaker "マルヒト";
-	msg "おお・・これがパラパラかあ";
-	msg "俺と友達になってくれ!";
-	speaker "パラパラ";
-	msg "パラッパララッ！";
-	speaker "";
-	msg "そうして、マルヒトとパラパラは";
-	msg "かけがえのない親友になった。おしまい";
-	staffroll;
+	speaker "パラパラ"
+	msg "パラッパラッ！"
+	speaker "マルヒト"
+	msg "おお・・これがパラパラかあ"
+	msg "俺と友達になってくれ!"
+	speaker "パラパラ"
+	msg "パラッパララッ！"
+	speaker ""
+	msg "そうして、マルヒトとパラパラは"
+	msg "かけがえのない親友になった。おしまい"
+	staffroll
 
 eventProperty 2
 	image parapara.tga

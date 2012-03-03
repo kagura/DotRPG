@@ -82,18 +82,18 @@ MapScript *LoadMapScript(const char *filename)
 	char mapScriptLine[512];
 	char eventScriptLine[512];
 	std::string expsStr;
-	const char *p = NULL;
 	while(fgets(mapScriptLine, sizeof(mapScriptLine), fp) != NULL){
 		expsStr = "";
 		if(mapScriptLine[strlen(mapScriptLine) - 1] == '\n'){
 			//改行を取り除く
 			mapScriptLine[strlen(mapScriptLine) - 1] = '\0';
 		}
-		p = strtok(mapScriptLine, " ");
-		bool isEventProperty = strcmp(p, "eventProperty") == 0;
-		bool isOnTouchEvent = strcmp(p, "onTouch") == 0;
-		bool isOnCheckEvent = strcmp(p, "onCheck") == 0;
-		bool isOnEnterEvent = strcmp(p, "onEnter") == 0;
+		std::vector<char *> scriptLineTokens;
+		SplitStr(mapScriptLine, " ", &scriptLineTokens);
+		bool isEventProperty = strcmp(scriptLineTokens[0], "eventProperty") == 0;
+		bool isOnTouchEvent = strcmp(scriptLineTokens[0], "onTouch") == 0;
+		bool isOnCheckEvent = strcmp(scriptLineTokens[0], "onCheck") == 0;
+		bool isOnEnterEvent = strcmp(scriptLineTokens[0], "onEnter") == 0;
 		if(isEventProperty || isOnTouchEvent || isOnCheckEvent || isOnEnterEvent){
 			while(fgets(eventScriptLine, sizeof(eventScriptLine), fp) != NULL){
 				if(eventScriptLine[0] != '\t' || eventScriptLine[1] == '\n'){
@@ -104,9 +104,8 @@ MapScript *LoadMapScript(const char *filename)
 			if(isOnTouchEvent || isOnCheckEvent || isOnEnterEvent){
 				EventScript *script = CompileEventScript(expsStr.c_str());
 				if(script != NULL){
-					p = strtok(NULL, " ");
-					if(p != NULL){
-						script->id = atoi(p);
+					if(scriptLineTokens.size() >= 2){
+						script->id = atoi(scriptLineTokens[1]);
 					}else{
 						script->id = -1;
 					}
@@ -121,16 +120,15 @@ MapScript *LoadMapScript(const char *filename)
 				}
 			}else if(isEventProperty){
 				EventProperty *eventProperty = new EventProperty;
-				p = strtok(NULL, " ");
-				if(p == NULL) {
-					printf("p==NULL\n");
-					exit(1);
+				if(scriptLineTokens.size() < 2) {
+					printf("event property need ID\n");
 				}
-				eventProperty->id = atoi(p);
+				eventProperty->id = atoi(scriptLineTokens[1]);
 				ReadEventProperty(expsStr.c_str(), eventProperty);
 				mapScript->eventProperties.push_back(eventProperty);
 			}
 		}
+		DeleteSplitStr(&scriptLineTokens);
 	}
 	fclose(fp);
 	return mapScript;
@@ -138,7 +136,7 @@ MapScript *LoadMapScript(const char *filename)
 
 EventScript *LoadEventScript(const char *filename)
 {
-	FILE *fp = fopen(filename, "r");
+	FILE *fp = fopen(filename, "rb");
 	if(fp == NULL){
 		printf("failed open event script '%s'\n", filename);
 		return NULL;
@@ -146,16 +144,119 @@ EventScript *LoadEventScript(const char *filename)
 	fseek(fp, 0, SEEK_END);
 	unsigned int fileLength = ftell(fp);
 	fseek(fp, 0, SEEK_SET);
-	char *str = new char[fileLength];
+	char *str = new char[fileLength + 1];
 	fread(str, fileLength, 1, fp);
+	str[fileLength] = 0;
 	fclose(fp);
 	EventScript *script = CompileEventScript(str);
 	delete[] str;
 	return script;
 }
 
+void SplitSpaceStrQuotationEscape(const char *str, std::vector<char *> *splitedStrs)
+{
+	if(str == NULL) return;
+	char *str2 = new char[strlen(str) + 1];
+	strcpy(str2, str);
+	char *p = str2;
+	char *start = str2;
+	char *strout;
+	while(*p != 0){
+		if(*p == '"'){
+			start = p + 1;
+			p++;
+			while(*p != '"'){
+				if(*p == 0) return;
+				p++;
+			}
+			*p = 0; //"を消す
+			strout = new char[strlen(start) + 1];
+			strcpy(strout, start);
+			splitedStrs->push_back(strout);
+			start = p + 1;
+		}
+		else if(*p == ' '){
+			*p = 0;
+			if(strlen(start) > 0){
+				strout = new char[strlen(start) + 1];
+				strcpy(strout, start);
+				splitedStrs->push_back(strout);
+			}
+			start = p + 1;
+		}
+		p++;
+	}
+	if(strlen(start) > 0){
+		strout = new char[strlen(start) + 1];
+		strcpy(strout, start);
+		splitedStrs->push_back(strout);
+	}
+}
+
 EventScript *CompileEventScript(const char *str)
 {
+	/*
+	std::vector<char *> strs;
+	SplitSpaceStrQuotationEscape(" a \"gg Cg\" \"V\" b c ", &strs);
+	for(int i = 0; i < strs.size(); i++){
+		printf("token=%s\n", strs[i]);
+	}
+	DeleteSplitStr(&strs);
+	*/
+	
+	EventScript *script = new EventScript;
+	script->expCount = 0;
+	std::vector<char *> lines;
+	SplitStr(str, "\n", &lines);
+	//式の数を数える
+	for(int i = 0; i < lines.size(); i++){
+		DeleteFirstSpaces(&lines[i]); //最初の空白を削除
+		DeleteLastNewLine(lines[i]); //改行を削除
+		const char *line = lines[i];
+		//改行だけの行またはコメント行であれば無視
+		if(line[0] != 0 && !(line[0] == '/' && line[1] == '/')){
+			script->expCount++;
+		}
+	}
+	script->expressions = new Expression[script->expCount];
+	int expIndex = 0;
+	std::vector<char *> tokens;
+	for(int i = 0; i < lines.size(); i++){
+		const char *line = lines[i];
+		SplitSpaceStrQuotationEscape(line, &tokens);
+		if(tokens.size() > 0 && !(line[0] == '/' && line[1] == '/')){
+			Expression *exp = &script->expressions[expIndex];
+			exp->command = CommandFromStr(tokens[0]);
+			if(exp->command == COMMAND_UNKNOWN){
+				printf("'%s' is not command name line:%d in CompileEventScript()\n",
+					tokens[0], i + 1);
+				delete[] script->expressions;
+				delete script;
+				DeleteSplitStr(&tokens);
+				DeleteSplitStr(&lines);
+				return NULL;
+			}
+			//規定のコマンド引数の数に達していなければエラー
+			if(tokens.size() - 1 < COMMAND_ARGUMENT_COUNTS[exp->command]){
+				printf("don't match argument count command:%s line:%d in CompileEventScript()\n", 
+						COMMAND_NAMES[exp->command], i + 1);
+				delete[] script->expressions;
+				delete script;
+				DeleteSplitStr(&tokens);
+				DeleteSplitStr(&lines);
+				return NULL;
+			}
+			for(int paramIndex = 0; paramIndex < COMMAND_ARGUMENT_COUNTS[exp->command]; paramIndex++){
+				strcpy(exp->args[paramIndex], tokens[1 + paramIndex]);
+			}
+			expIndex++;
+		}
+		DeleteSplitStr(&tokens);
+	}
+	DeleteSplitStr(&lines);
+	Script_Print(script);
+	//exit(0);
+	/*
 	const char *p = str;
 	char *str2 = new char[strlen(str) + 1];
 	char *p2 = str2;
@@ -166,10 +267,8 @@ EventScript *CompileEventScript(const char *str)
 				p++;
 			}
 		}
-		if(*p != '\n'){
-			*p2 = *p;
-			p2++;
-		}
+		*p2 = *p;
+		p2++;
 		p++;
 	}
 	EventScript *script = new EventScript;
@@ -177,7 +276,7 @@ EventScript *CompileEventScript(const char *str)
 	//式の数を調べる
 	p = str2;
 	while(*p != '\0'){
-		if(*p == ';'){
+		if(*p == '\n'){
 			script->expCount++;
 		}
 		p++;
@@ -195,7 +294,7 @@ EventScript *CompileEventScript(const char *str)
 		}
 		//コマンド名を読み取る
 		tokenPos = 0;
-		while(*p != ' ' && *p != ';'){
+		while(*p != ' ' && *p != '\n'){
 			token[tokenPos] = *p;
 			tokenPos++;
 			p++;
@@ -214,7 +313,7 @@ EventScript *CompileEventScript(const char *str)
 		//コマンド引数を読み取る
 		for(int paramIndex = 0; paramIndex < COMMAND_ARGUMENT_COUNTS[exp->command]; paramIndex++){
 			tokenPos = 0;
-			while(*p != ' ' && *p != ';'){
+			while(*p != ' ' && *p != '\n'){
 				if(*p == '"'){
 					p++;
 					while(*p != '"'){
@@ -233,7 +332,7 @@ EventScript *CompileEventScript(const char *str)
 				p++;
 			}
 			//規定のコマンド引数の数に達していなければエラー
-			if(*p == ';' && paramIndex < COMMAND_ARGUMENT_COUNTS[exp->command] - 1){
+			if(*p == '\n' && paramIndex < COMMAND_ARGUMENT_COUNTS[exp->command] - 1){
 				printf("don't match argument count command:%s line:%d in CompileEventScript()\n", 
 						COMMAND_NAMES[script->expressions[i].command], i);
 				delete[] script->expressions;
@@ -245,6 +344,7 @@ EventScript *CompileEventScript(const char *str)
 			strcpy(script->expressions[i].args[paramIndex], token);
 		}
 	}
+	*/
 	return script;
 }
 

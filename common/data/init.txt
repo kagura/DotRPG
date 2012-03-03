@@ -1,3 +1,3 @@
-addparty maruhito;
-addparty sanae;
-changemap "maruhitoHouse" 8 6;
+addparty maruhito
+addparty sanae
+changemap "maruhitoHouse" 8 6

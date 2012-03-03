@@ -1,24 +1,24 @@
 onTouch 1
-	changemap "sanaeHouse" 8 7;
+	changemap "sanaeHouse" 8 7
 
 onTouch 2
-	changemap "maruhitoHouse" 8 7;
+	changemap "maruhitoHouse" 8 7
 
 onTouch 4
-	if 10 "";
-		msg "村の外に用はない";
-	else;
-		changemap "field" 10 8;
-	endif;
+	if 10 ""
+		msg "村の外に用はない"
+	else
+		changemap "field" 10 8
+	endif
 	
 onCheck 3
-	if 10 "";
-		msg "よお、マルヒト。例のパラパラは見つかったかい？";
-		msg "あんなのTVのフィクションだから";
-		msg "見つからないだろうけどな";
-	else;
-		msg "さなえちゃん連れてどこ行くつもりだ？";
-	endif;
+	if 10 ""
+		msg "よお、マルヒト。例のパラパラは見つかったかい？"
+		msg "あんなのTVのフィクションだから"
+		msg "見つからないだろうけどな"
+	else
+		msg "さなえちゃん連れてどこ行くつもりだ？"
+	endif
 
 eventProperty 3
 	image man.tga

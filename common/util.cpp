@@ -4,6 +4,10 @@
 
 void SplitStr(const char *str, const char *separetors, std::vector<char *> *splitedStrs)
 {
+	if(str == NULL){
+		return;
+	}
+	if(str[0] == 0) return;
 	char *str2 = new char[strlen(str) + 1];
 	strcpy(str2, str);
 	char *strout;
@@ -57,4 +61,22 @@ char *LoadChars(const char *filename)
 	str[fileLength] = '\0';
 	fclose(fp);
 	return str;
+}
+
+void DeleteLastNewLine(char *str)
+{
+	char *last = &str[strlen(str) - 1];
+	if(*last == 0x0D){
+		*last = 0;
+	}else if(last != str && *(last - 1) == 0x0D && *last == 0x0A){
+		*(last - 1) = 0;
+		*last = 0;
+	}
+}
+
+void DeleteFirstSpaces(char **str)
+{
+	while(**str == ' ' || **str == '\t'){
+		*str = *str + 1;
+	}
 }
